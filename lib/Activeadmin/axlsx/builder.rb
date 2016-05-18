@@ -1,12 +1,12 @@
 module Activeadmin
   module Axlsx
     class Builder
-      attr_reader :resource_class, :collections
+      attr_reader :resource_class, :collection
 
-      def initialize(resource_class, collections)
+      def initialize(resource_class, collection)
         configuration!
         @resource_class = resource_class
-        @collections = collections
+        @collection = collection
       end
 
       def call
@@ -16,13 +16,13 @@ module Activeadmin
       def file
         ::Axlsx::Package.new do |package|
           loop do
-            collections_per_page = collections.page(@page).per(@per)
+            resources = collection.page(@page).per(@per)
 
-            break unless collections_per_page.present?
+            break unless resources.present?
 
             package.workbook.add_worksheet(name: "Page - #{@page}") do |sheet|
               sheet.add_row localized_columns
-              collections_per_page.each do |resource|
+              resources.each do |resource|
                 sheet.add_row(columns.map { |column| resource.try(column) })
               end
             end
