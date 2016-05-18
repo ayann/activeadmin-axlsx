@@ -4,9 +4,9 @@ module Activeadmin
       attr_reader :resource_class, :collections
 
       def initialize(resource_class, collections)
+        configuration!
         @resource_class = resource_class
         @collections = collections
-        @page = 1
       end
 
       def call
@@ -16,7 +16,7 @@ module Activeadmin
       def file
         ::Axlsx::Package.new do |package|
           loop do
-            collections_per_page = collections.page(@page).per(200)
+            collections_per_page = collections.page(@page).per(@per)
 
             break unless collections_per_page.present?
 
@@ -34,7 +34,7 @@ module Activeadmin
       end
 
       def columns
-        resource_class.attribute_names
+        resource_class.attribute_names.reject { |a| @delete_columns.include? a }
       end
 
       def localized_columns
@@ -45,6 +45,15 @@ module Activeadmin
 
       def filename
         "#{resource_class.to_s.tr('_', '-')}-#{Time.now.strftime('%Y-%m-%d')}.xlsx"
+      end
+
+      private
+
+      def configuration!
+        configuration = Rails.application.config.activeadmin_axlsx
+        @per = configuration.per
+        @delete_columns = configuration.delete_columns.map(&:to_s)
+        @page = 1
       end
     end
   end
