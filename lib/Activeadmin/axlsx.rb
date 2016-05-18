@@ -1,7 +1,8 @@
-require "Activeadmin/axlsx/version"
+require 'Activeadmin/axlsx/railtie'
+require 'Activeadmin/axlsx/version'
+require 'Activeadmin/axlsx/Builder'
 
 module Activeadmin
   module Axlsx
-    # Your code goes here...
   end
 end
