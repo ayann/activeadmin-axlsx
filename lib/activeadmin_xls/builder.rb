@@ -33,7 +33,7 @@ module ActiveadminXls
     end
 
     def columns
-      resource_class.attribute_names.reject { |a| @delete_columns.include? a }
+      resource_class.attribute_names.reject { |c| @delete_columns.include? c }
     end
 
     def localized_columns
